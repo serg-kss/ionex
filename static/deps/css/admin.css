@@ -1,0 +1,14 @@
+.adminHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 480px){
+    .adminHeader {
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+    }
+}

@@ -1,0 +1,28 @@
+{% load static %}
+{% load carts_tag %}
+
+<ul class="list-group mb-3" id="cart-items-container-modal">
+{% for cart in carts %}
+    <li class="list-group-item d-flex justify-content-between lh-sm">
+      <div>
+        <h6 class="my-0">{{cart.product.name}}</h6>
+        <small class="text-body-secondary">Товари: {{cart.quantity}} шт.</small>
+      </div>
+      <div class="d-flex">
+        <span class="text-body-secondary d-flex justify-content-center align-items-center">{{cart.product.sell_price}}</span>
+        <a href="{% url "carts:cart_remove" %}" class="remove-from-cart d-flex justify-content-center align-items-center ps-2" data-cart-id="{{cart.id}}">
+          {% csrf_token %}
+          <img class="mx-1" src="{% static "deps/icons/trash.svg" %}" alt="Catalog Icon" width="14" height="14">
+        </a>
+      </div>
+    </li>
+  {% endfor %}
+    {% if carts.total_price > 0 %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Разом (UAH)</span>
+        <strong>₴ {{carts.total_price}} </strong>
+      </li>
+    {% else %}
+      <span>порожній <i class="bi bi-emoji-frown"></i></span>
+    {% endif %}
+</ul>

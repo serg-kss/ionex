@@ -1,0 +1,85 @@
+{% extends "root.html" %}
+{% load static %}
+{% load goods_tags %}
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock modal_cart %}
+
+{% block content %}
+
+<!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">{{title}}</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="{% url "main:index" %}">Головна</a></li>
+            <li class="current"><a href="{% url "services:all" %}">Всі послуги</a></li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+    <!-- Service Details Section -->
+    <section id="service-details" class="service-details section">
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+      
+            <h4>Заповнюйте форму — і ми зв’яжемось з вами найближчим часом!</h4>
+            <p>Чому обирають нас:</p>
+            <p>Щоб замовити послугу — заповніть форму нижче 👇</p>
+            <form method="post" action="" role="form" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+              {% csrf_token %}
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Ваше ім'я" required="" id="name">
+                </div>
+
+                <div class="col-md-6">
+                  <input type="tel" name="phone" title="Формат: 099 344 1042" class="form-control" placeholder="Тел: 0991110011" required="" id="phone">
+                </div>
+
+                <div class="col-md-12 ">
+                  <input type="email" class="form-control" name="email" placeholder="Ваш Email" required="" id="email">
+                </div>
+
+                <div class="col-md-12 text-center">
+                  {% if error %}
+                  <div class="error-message">{{error}}</div>
+                  {% endif %}
+                  <button type="submit">Замовити</button>
+                </div>
+
+              </div>
+            </form>
+
+          </div>
+
+          <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
+            <img src="{% static "assets/img/services.jpg" %}" alt="" class="img-fluid services-img">
+            {{service.content|safe}}
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Service Details Section -->
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .querySelectorAll(".article-content table")
+      .forEach(function (table) {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("table-responsive");
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+  });
+</script>
+{% endblock content %}

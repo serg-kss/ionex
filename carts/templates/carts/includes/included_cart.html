@@ -1,0 +1,67 @@
+{% load static %}
+{% load carts_tag %}
+
+
+{% user_carts request as carts %}
+<style>
+    .qty .count {
+    color: #000;
+    display: inline-block;
+    vertical-align: top;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 30px;
+    padding: 0 2px
+    ;min-width: 35px;
+    text-align: center;
+}
+
+input{  
+    border: 0;
+    width: 2%;
+}
+
+input:disabled{
+    background-color:white;
+}
+         
+</style>
+<div id="delete_order">
+    {% for cart in carts %}
+    <div class="row">
+        <div class="col-12 col-md-6 text-start">
+            <h5>{{cart.product.name}}</h5>
+        </div>
+        <div class="col-12 col-md-6 text-start">
+            <ul class="list-group list-group-flush">
+                <li class="d-flex align-items-center justify-content-around">
+                    <div class="row text-center d-flex align-items-center justify-content-around">
+                        <div class="col-4 d-flex align-items-center justify-content-around">
+                            <div class="d-flex align-items-center justify-content-around input-group qty">
+                                <i class="bi bi-dash-square decrement" data-cart-id="{{cart.id}}" data-cart-change-url="{% url "cart:cart_change" %}">{% csrf_token %}</i>
+                                <input type="text" class="count number" value="{{cart.quantity}}" readonly>
+                                <i class="bi bi-plus-square increment" data-cart-id="{{cart.id}}" data-cart-change-url="{% url "cart:cart_change" %}">{% csrf_token %}</i>
+                            </div>
+                        </div>
+                        <div class="col-4"><strong>{{cart.products_price}} ₴</strong></div>
+                        <div class="col-4">
+                            <a href="{% url "carts:cart_remove" %}" class="remove-from-cart" data-cart-id="{{cart.id}}">
+                                {% csrf_token %}
+                                <img class="mx-1" src="{% static "deps/icons/trash3-fill.svg" %}"
+                                    alt="Catalog Icon" width="16" height="16">
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="mb-3">
+        <hr>
+        <div class="">
+            <p class="float-left">Разом (UAH)</p>
+            <h4 class="float-left"><strong>{{carts.total_price}} ₴</strong></h4>
+        </div>
+    </div>
+</div>

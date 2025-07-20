@@ -1,0 +1,343 @@
+{% extends "root.html" %}
+{% load static %}
+{% load goods_tags %}
+{% load carts_tag %}
+{% block modal_cart %}
+{% include "includes/cart_button.html" %}
+{% endblock modal_cart %}
+{% load services_tags %}
+
+{% block content %}
+
+<style>
+  .form-group {
+    position: relative;
+}
+
+#cityList,
+#warehouseList {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-top: none;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#cityList li,
+#warehouseList li {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#cityList li:hover,
+#warehouseList li:hover {
+    background-color: #f8f9fa;
+}
+</style>
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">{{title}}</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="{% url "main:index" %}">Головна</a></li>
+            <li class="current">{{title}}</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Comment Form Section -->
+          <section id="comment-form" class="comment-form section mt-4">
+            <div class="container">
+              <h3 class="text-center mb-4">Обрані товари:</h3>
+              <div class="container" id="cart-items-container">
+                <!-- Разметка корзины -->
+              {% user_carts request as carts %}
+              {% include "carts/includes/included_cart.html" %}
+              <!-- Закончилась разметка корзины -->
+              </div>
+            </div>
+            <div class="container">
+              <form action="{% url "orders:create_order" %}" method="post">
+                {% csrf_token %}
+                <h4>Для створення заказу заповніть форму</h4>
+                <p>Ваші персональні дані не будуть опубліковані</p>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input 
+                      name="first_name" 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Ваше імʼя"
+                      value="{% if form.first_name.value %}{{form.first_name.value}}{% endif %}"
+                      required
+                      >
+                      {% if form.first_name.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">{{form.first_name.errors}}</div>
+                      {% endif %}
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <input 
+                      name="last_name"
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Ваше призвище"
+                      value="{% if form.last_name.value %}{{form.last_name.value}}{% endif %}"
+                      required
+                      >
+                      {% if form.last_name.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">{{form.last_name.errors}}</div>
+                      {% endif %}
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <input type="text" class="form-control" id="id_phone_number" 
+                      name="phone_number"
+                      value="{% if form.phone_number.value %}{{form.phone_number.value}}{% endif %}"
+                      placeholder="Ваш телефон: 0991112233"
+                      required>
+                      {% if form.phone_number.errors %}
+                        <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
+                      {% endif %}
+                    </div>
+                  <div class="col-md-6 form-group">
+                    <input 
+                      name="email" 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="email@gmail.com"
+                      value="{% if form.email.value %}{{form.email.value}}{% endif %}"
+                      required>
+                  </div>
+                </div>
+                
+                <div class="row">
+                  <div class="col-md-6 form-group text-center">
+                    <span>Доставляємо:</span>
+                    <img src="{% static "deps/images/nova-poshta.png" %}" alt="nova-poshta" width="60" height="24">
+                  </div>
+                  <div class="col-md-6 form-group">
+                   <select 
+                    id="areaSelect" 
+                    class="form-control"
+                    name="region"
+                    required>
+                    <option value="">Оберіть область ▼</option>
+                   </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input 
+                      class="form-control" 
+                      type="text" 
+                      id="cityInput"
+                      name="city" 
+                      placeholder="Введіть місто"  
+                      disabled
+                      required>
+                    <ul class="border-0" id="cityList"></ul>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <input 
+                      class="form-control" 
+                      type="text" 
+                      id="warehouseInput"
+                      name="warehouse"
+                      placeholder="Введіть відділення"
+                      disabled 
+                      required>
+                  <ul class="border-0" id="warehouseList"></ul>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group text-center">
+                    <div class="col-12">
+                      <span>Оберіть оплату:</span>
+                      <img src="{% static "deps/images/nova-poshta.png" %}" alt="nova-poshta" width="60" height="24">
+                      <i class="bi bi-bank2"></i>
+                    </div>
+                    <div class="col-12">
+                      <span>Рахунок на передоплату відправляється на email <i class="bi bi-envelope-exclamation"></i></span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <select 
+                      id="payment_on_get" 
+                      name="payment_on_get" 
+                      class="form-control" 
+                      required>
+                      <option value="">Оберіть оплату ▼</option>
+                      <option value="НП - оплата при отриманні">НП - оплата при отриманні</option>
+                      <option value="Передоплата на рахунок">Передоплата на рахунок</option>
+                   </select>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Замовити</button>
+                </div>
+              </form>
+            </div>
+          </section><!-- /Comment Form Section -->
+        </div>
+        <div class="col-lg-4 sidebar">
+          <div class="widgets-container">
+            <!-- Categories Widget -->
+            <div class="categories-widget widget-item">
+              <h3 class="widget-title">Замовляй наші послуги</h3>
+              <ul class="mt-3">
+                {% for service in services %}
+                <li><a href="{% url "services:index" service.slug %}">{{service.name}}</a></li>
+                {% endfor %}
+              </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  
+  const areaSelect = document.getElementById('areaSelect');
+  const cityInput = document.getElementById('cityInput');
+  const cityList = document.getElementById('cityList');
+  const warehouseInput = document.getElementById('warehouseInput');
+  const warehouseList = document.getElementById('warehouseList');
+
+  //console.log('Элемент areaSelect:', areaSelect);
+
+  async function npRequest(method, properties) {
+    //console.log('Отправляем запрос:', method, properties);
+    const response = await fetch('/orders/api/novaposhta/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method, properties })
+    });
+    const result = await response.json();
+    //console.log('Ответ от сервера:', result);
+    return result;
+  }
+
+  let selectedAreaRef = '';
+  let selectedCityRef = '';
+
+  // Загрузка списка областей
+  (async () => {
+    const data = await npRequest('getAreas', {});
+    //console.log('Загружаем области', data);
+    (data.data || []).forEach(area => {
+      const option = document.createElement('option');
+      option.value = area.Ref;
+      option.textContent = area.Description;
+      areaSelect.appendChild(option);
+    });
+  })();
+
+  // Выбор области
+  areaSelect.addEventListener('change', () => {
+    selectedAreaRef = areaSelect.value;
+    //console.log('Выбрана область Ref:', selectedAreaRef);
+
+    cityInput.value = '';
+    warehouseInput.value = '';
+    selectedCityRef = '';
+
+    cityInput.disabled = !selectedAreaRef;
+    warehouseInput.disabled = true;
+    //cityList.value=''
+    //warehouseList.value=''
+    cityList.innerHTML = '';
+    warehouseList.innerHTML = '';
+  });
+
+  // Автокомплит для городов
+  cityInput.addEventListener('input', async () => {
+    const text = cityInput.value.trim();
+    //console.log('Введено в город:', text, 'Выбранная область:', selectedAreaRef);
+
+    if (text.length < 2 || !selectedAreaRef) {
+      //console.log('Не выполняем запрос городов. Недостаточно символов или не выбрана область.');
+      cityList.innerHTML = '';
+      return;
+    }
+
+    const data = await npRequest('getCities', {
+      FindByString: text,
+      AreaRef: selectedAreaRef
+    });
+
+    cityList.innerHTML = '';
+    //console.log('Получены города:', data);
+
+    (data.data || []).forEach(city => {
+      const li = document.createElement('li');
+      li.textContent = city.Description;
+      li.dataset.ref = city.Ref;
+      cityList.appendChild(li);
+    });
+  });
+
+  // Выбор города
+  cityList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'LI') {
+      cityInput.value = e.target.textContent;
+      selectedCityRef = e.target.dataset.ref;
+      cityList.innerHTML = '';
+
+      warehouseInput.disabled = false;
+      //warehouseInput.value = '';
+      warehouseList.innerHTML = '';
+
+      //console.log('Выбран город Ref:', selectedCityRef);
+    }
+  });
+
+  // Автокомплит для отделений
+  warehouseInput.addEventListener('input', async () => {
+    const text = warehouseInput.value.trim();
+    //console.log('Введено в отделение:', text, 'Выбранный город:', selectedCityRef);
+
+    if (text.length < 1 || !selectedCityRef) {
+      //console.log('Не выполняем запрос отделений. Недостаточно символов или не выбран город.');
+      warehouseList.innerHTML = '';
+      return;
+    }
+
+    const data = await npRequest('getWarehouses', {
+      CityRef: selectedCityRef,
+      FindByString: text
+    });
+
+    warehouseList.innerHTML = '';
+    console.log('Получены отделения:', data);
+
+    (data.data || []).forEach(wh => {
+      const li = document.createElement('li');
+      li.textContent = wh.Description;
+      li.dataset.ref = wh.Ref;
+      warehouseList.appendChild(li);
+    });
+  });
+
+  // Выбор отделения
+  warehouseList.addEventListener('click', (e) => {
+    if (e.target.tagName === 'LI') {
+      warehouseInput.value = e.target.textContent;
+      warehouseList.innerHTML = '';
+      //console.log('Выбрано отделение:', e.target.textContent, 'Ref:', e.target.dataset.ref);
+    }
+  });
+
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static "deps/css/admin.css" %}">
+{% endblock %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <div class="adminHeader">
+    <img src="{% static "deps/images/logo.png" %}" alt="" width="112" height="45">
+    <a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>
+  </div>
+</div>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}
+<script src="{% static "deps/js/admin/admin.js" %}"></script>
+{% endblock %}

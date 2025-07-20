@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% load static %} {% load goods_tags %} {% block
+modal_cart %} {% include "includes/cart_button.html" %} {% endblock modal_cart
+%} {% block content %}
+<!-- Контент на странице -->
+<div class="container py-5">
+  <div class="article-content">{{ service.content|safe }}</div>
+</div>
+<style>
+  .article-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1rem 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  table,
+  th,
+  td {
+    border: 1px solid rgb(0, 0, 0);
+  }
+
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document
+      .querySelectorAll(".article-content table")
+      .forEach(function (table) {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("table-responsive");
+        table.parentNode.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+      });
+  });
+</script>
+{% endblock content %} {% block footer %} {% include "includes/footer.html" %}
+{% endblock footer %}
