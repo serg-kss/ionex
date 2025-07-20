@@ -9,7 +9,7 @@ def index(request):
 
     context ={
         'title': "ІОНЕКС - Товари та послуги для рентгенкабінету",
-        #'seo': seo, #here
+        'seo': 'ІОНЕКС — товари та послуги для рентгенкабінетів. Обладнання, витратні матеріали, сервісне обслуговування та консультації. Якість, надійність, професійний підхід.', #here
     }
     return render(request, 'main/index.html', context)
 
@@ -24,10 +24,10 @@ def contacts(request):
 
     context ={
         'title': "ІОНЕКС - Наші контакти",
-        #'email': contact_email,
-        #'phone': contact_phone,
-        #'address': contact_address,
-        #'seo': seo,
+        'email': 'ionex.xray@gmail.com',
+        'phone': '0978950558, 0935620518',
+        'address': 'м. Дніпро',
+        'seo': 'Звʼяжіться з ІОНЕКС — товари та послуги для рентгенкабінетів. Адреса, телефон, електронна пошта, форма зворотного звʼязку та години роботи.',
     }
 
     if request.method == 'POST':
