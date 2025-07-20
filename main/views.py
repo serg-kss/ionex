@@ -4,30 +4,30 @@ from main.models import Contacts, Contact
 
 
 def index(request):
-    #record = Contacts.objects.first()
+    record = Contacts.objects.first()
     #seo = record.seo
 
     context ={
         'title': "ІОНЕКС - Товари та послуги для рентгенкабінету",
-        #'seo': seo,
+        'seo': 'seo', #here
     }
     return render(request, 'main/index.html', context)
 
 
 def contacts(request):
 
-    #record = Contacts.objects.first()
-    #contact_email = record.email
-    #contact_phone = record.phone
-    #contact_address = record.address
-    #seo = record.seo
+    record = Contacts.objects.first()
+    contact_email = record.email
+    contact_phone = record.phone
+    contact_address = record.address
+    seo = record.seo
 
     context ={
         'title': "ІОНЕКС - Наші контакти",
-        #'email': contact_email,
-        #'phone': contact_phone,
-        #'address': contact_address,
-        #'seo': seo,
+        'email': contact_email,
+        'phone': contact_phone,
+        'address': contact_address,
+        'seo': seo,
     }
 
     if request.method == 'POST':
